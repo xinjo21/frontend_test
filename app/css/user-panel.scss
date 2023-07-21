@@ -1,0 +1,22 @@
+.user-panel {
+  display: flex;
+  flex-flow: column nowrap;
+  padding: 16px;
+
+  > .header {
+    flex: 0 0 48px;
+    display: flex;
+  }
+
+  > .header > .close {
+    margin-left: auto;
+  }
+
+  > .header > button.close {
+    appearance: none;
+  }
+
+  > .header + .body {
+    margin-top: 16px;
+  }
+}
