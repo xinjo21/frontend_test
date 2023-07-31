@@ -4,6 +4,7 @@ import styles from "./page.module.css";
 import Gallery from "./gallery";
 
 export default function Home() {
+  // data from https://jsonplaceholder.typicode.com/users
   const users = [
     {
       id: 1,
