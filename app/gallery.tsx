@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Avatar from "boring-avatars";
 import {
   FaRegCircleXmark,
@@ -9,6 +9,7 @@ import {
   FaEnvelope,
 } from "react-icons/fa6";
 
+import Controls from "./controls";
 import Modal from "./modal";
 
 import { User } from "./types/user";
@@ -20,11 +21,13 @@ const Gallery = ({ users }: GalleryProps) => {
   const [usersList, setUsersList] = useState(users);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [field, setField] = useState<String>("");
+  const [direction, setDirection] = useState<String>("");
 
   const handleModalOpen = (id: number) => {
     const user = usersList.find((item) => item.id === id) || null;
 
-    if(user) {
+    if (user) {
       setSelectedUser(user);
       setIsModalOpen(true);
     }
@@ -35,9 +38,20 @@ const Gallery = ({ users }: GalleryProps) => {
     setIsModalOpen(false);
   };
 
+  if (field === "name") usersList.sort((a, b) => a.name.localeCompare(b.name));
+  if (field === "email")
+    usersList.sort((a, b) => a.email.localeCompare(b.email));
+  if (field === "company")
+    usersList.sort((a, b) => a.company.name.localeCompare(b.company.name));
+
+  if (direction === "descending") usersList.reverse();
+  
   return (
     <div className="user-gallery">
-      <h1 className="heading">Users</h1>
+      <div className="heading">
+        <h1 className="title">Users</h1>
+        <Controls filter={setField} direction={setDirection} />
+      </div>
       <div className="items">
         {usersList.map((user, index) => (
           <div
