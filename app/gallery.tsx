@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Avatar from "boring-avatars";
+import Image from "next/image";
 import {
   FaRegCircleXmark,
   FaLocationDot,
@@ -13,18 +14,21 @@ import Modal from "./modal";
 
 import { User } from "./types/user";
 
+import { getUsers } from "./api/users";
+
 export type GalleryProps = {
   users: User[];
 };
-const Gallery = ({ users }: GalleryProps) => {
-  const [usersList, setUsersList] = useState(users);
+
+const Gallery = () => {
+  const [usersList, setUsersList] = useState();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleModalOpen = (id: number) => {
     const user = usersList.find((item) => item.id === id) || null;
 
-    if(user) {
+    if (user) {
       setSelectedUser(user);
       setIsModalOpen(true);
     }
@@ -35,30 +39,41 @@ const Gallery = ({ users }: GalleryProps) => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+    getUsers().then((data) => {
+      setUsersList(data.results);
+    });
+  }, []);
+
   return (
     <div className="user-gallery">
       <h1 className="heading">Users</h1>
       <div className="items">
-        {usersList.map((user, index) => (
-          <div
-            className="item user-card"
-            key={index}
-            onClick={() => handleModalOpen(user.id)}
-          >
-            <div className="body">
-              <Avatar
-                size={96}
-                name={user.name}
-                variant="marble"
-                colors={["#92A1C6", "#146A7C", "#F0AB3D", "#C271B4", "#C20D90"]}
-              />
+        {usersList &&
+          usersList.map((user, index) => (
+            <div
+              className="item user-card"
+              key={index}
+              onClick={() => handleModalOpen(user.id)}
+            >
+              <div className="body">
+                <img
+                  className="avatar-img"
+                  src={user.picture.medium}
+                  width={100}
+                  height={100}
+                />
+              </div>
+              <div className="info">
+                <div className="name">
+                  {user.name.first} {user.name.last}
+                </div>
+                <div className="company">
+                  {`${user.location.street.name}, ${user.location.city}`}
+                </div>
+              </div>
             </div>
-            <div className="info">
-              <div className="name">{user.name}</div>
-              <div className="company">{user.company.name}</div>
-            </div>
-          </div>
-        ))}
+          ))}
         <Modal isOpen={isModalOpen} onClose={handleModalClose}>
           <div className="user-panel">
             <div className="header">
@@ -75,38 +90,32 @@ const Gallery = ({ users }: GalleryProps) => {
               {selectedUser && (
                 <div className="user-info info">
                   <div className="avatar">
-                    <Avatar
-                      size={240}
-                      name={selectedUser.name}
-                      variant="marble"
-                      colors={[
-                        "#92A1C6",
-                        "#146A7C",
-                        "#F0AB3D",
-                        "#C271B4",
-                        "#C20D90",
-                      ]}
+                    <img
+                      className="avatar-img"
+                      src={selectedUser.picture.medium}
+                      width={250}
+                      height={250}
                     />
                   </div>
                   <div className="name">
-                    {selectedUser.name} ({selectedUser.username})
+                    {selectedUser.name.first} ({selectedUser.login.username})
                   </div>
                   <div className="field">
                     <FaLocationDot className="icon" />
-                    <div className="data">{`${selectedUser.address.street}, ${selectedUser.address.suite}, ${selectedUser.address.city}`}</div>
+                    <div className="value">{`${selectedUser.location.street.number}, ${selectedUser.location.street.name}, ${selectedUser.location.city}`}</div>
                   </div>
                   <div className="field">
                     <FaPhone className="icon" />
                     <div className="value">{selectedUser.phone}</div>
                   </div>
-                  <div className="fields">
+                  <div className="field">
                     <FaEnvelope className="icon" />
                     <div className="value">{selectedUser.email}</div>
                   </div>
                   <div className="company">
-                    <div className="name">{selectedUser.company.name}</div>
+                    <div className="name"></div>
                     <div className="catchphrase">
-                      {selectedUser.company.catchPhrase}
+                      
                     </div>
                   </div>
                 </div>
