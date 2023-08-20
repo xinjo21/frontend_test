@@ -1,11 +1,22 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import styles from "./page.module.css";
-
 import Gallery from "./gallery";
 
 export default function Home() {
-  // data from https://jsonplaceholder.typicode.com/users
-  const users = [
+  const [users, setUsers] = useState<any>('');
+
+  return (
+    <main className={styles.main}>
+      <Gallery />
+    </main> 
+  );
+}
+
+
+/*   const users = [
     {
       id: 1,
       name: "Leanne Graham",
@@ -236,10 +247,4 @@ export default function Home() {
         bs: "target end-to-end models",
       },
     },
-  ];
-  return (
-    <main className={styles.main}>
-      <Gallery users={users} />
-    </main>
-  );
-}
+  ]; */
