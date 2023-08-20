@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Avatar from "boring-avatars";
 import {
   FaRegCircleXmark,
@@ -21,6 +21,8 @@ const Gallery = ({ users }: GalleryProps) => {
   const [usersList, setUsersList] = useState(users);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [field, setField] = useState<String>("");
+  const [direction, setDirection] = useState<String>("");
 
   const handleModalOpen = (id: number) => {
     const user = usersList.find((item) => item.id === id) || null;
@@ -36,11 +38,19 @@ const Gallery = ({ users }: GalleryProps) => {
     setIsModalOpen(false);
   };
 
+  if (field === "name") usersList.sort((a, b) => a.name.localeCompare(b.name));
+  if (field === "email")
+    usersList.sort((a, b) => a.email.localeCompare(b.email));
+  if (field === "company")
+    usersList.sort((a, b) => a.company.name.localeCompare(b.company.name));
+
+  if (direction === "descending") usersList.reverse();
+  
   return (
     <div className="user-gallery">
       <div className="heading">
         <h1 className="title">Users</h1>
-        <Controls />
+        <Controls filter={setField} direction={setDirection} />
       </div>
       <div className="items">
         {usersList.map((user, index) => (
